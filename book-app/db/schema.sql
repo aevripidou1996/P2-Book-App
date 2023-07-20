@@ -1,2 +1,4 @@
-DROP DATABASE IF EXISTS book_app_db;
-CREATE DATABASE book_app_db;
+-- Drops the good_reader_db if it exists currently --
+DROP DATABASE IF EXISTS good_reader_db;
+-- Creates the "good_reader_db" database --
+CREATE DATABASE good_reader_db;
