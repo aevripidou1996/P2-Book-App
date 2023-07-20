@@ -1,43 +1,31 @@
-const { Model, DataTypes } = require('sequelize');
-const sequelize = require('../config/config');
+module.exports = function(sequelize, DataTypes) {
+  var Book = sequelize.define("Book", {
+    title: DataTypes.STRING,
+    subtitle: DataTypes.STRING,
+    authors: DataTypes.STRING,
+    categories: DataTypes.STRING,
+    thumbnail: DataTypes.STRING,
+    description: DataTypes.TEXT,
+    published_year: DataTypes.INTEGER,
+    average_rating: DataTypes.DECIMAL,
+    num_pages: DataTypes.INTEGER,
+    ratings_count: DataTypes.INTEGER,
+    price: DataTypes.DECIMAL(10,2),
+    createdAt: {
+      type: DataTypes.DATE,
+      defaultValue: new Date()
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      defaultValue: new Date()
+    }
+  });
 
-class Book extends Model {}
+  Book.associate = function(models) {
+    Book.belongsToMany(models.Shoppingcart, { through: 'Shoppingcart_Book' }); // Missing variables book_id and user_id
+    Book.belongsToMany(models.Purchase, { through: 'Purchase_Book' }); // Missing variables purchase_id and book_id
+    // Book.belongsToMany(models.User, { through: 'User_Book' });
+  };
 
-  Book.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    genre: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: 'genre',
-        key: 'id',
-      },
-    },
-    title: {
-      type: DataTypes.STRING(25),
-      allowNull: false,
-    },
-    description: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    author: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-  },
-  {
-    sequelize,
-    timestamps: false,
-    freezeTableName: true,
-    underscored: true,
-    modelName: 'book',
-  }
-);
-
-module.exports = Book;
+  return Book;
+};

@@ -1,59 +1,55 @@
-const { Model, DataTypes } = require('sequelize');
-const bcrypt = require('bcrypt');
-const sequelize = require('../config/config');
+var bcrypt = require("bcryptjs");
 
-class User extends Model {
-  checkPassword(loginPw) {
-    return bcrypt.compareSync(loginPw, this.password);
-  }
-}
- User.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    username: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        len: [8],
-        // TO DO! how to check the password lenght?
-      },
-    },
-    // dateCreated: {
-    //   type: DataTypes.DATEONLY,
-    //   allowNull: false,
-    //   defaultValue: DataTypes.NOW,
-    // },    
-  },
-  
-  // Hooks are automatic methods that run during various phases of the Pass Model lifecycle
-  // In this case, before a Pass is created or updated, we will automatically hash their password
-  {
-    hooks: {
-      beforeCreate: async (newUserData) => {
-        newUserData.password = await bcrypt.hash(newUserData.password, 10);
-        return newUserData;
-      },
-      beforeUpdate: async (updatedUserData) => {
-        updatedUserData.password = await bcrypt.hash(updatedUserData.password, 10);
-        return updatedUserData;
-      },
-    },
-    sequelize,
-    timestamps: false,
-    freezeTableName: true,
-    underscored: true,
-    modelName: 'user',
-  }
-);
+module.exports = function (sequelize, DataTypes) {
+    var User = sequelize.define("User", {
+        name: DataTypes.STRING,
+        // The email cannot be null, and must be a proper email before creation
+        email: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            unique: true,
+            validate: {
+                isEmail: true
+            }
+        },
+        // The password cannot be null
+        password: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        preferences1: DataTypes.STRING,
+        preferences2: DataTypes.STRING,
+        preferences3: DataTypes.STRING,
+        createdAt: {
+            type: DataTypes.DATE,
+            defaultValue: new Date()
+        },
+        updatedAt: {
+            type: DataTypes.DATE,
+            defaultValue: new Date()
+        }
+    });
 
-module.exports = User;
+    User.associate = function (models) {
+        // Associating User with Shoppingcart
+        // When an User is deleted, also delete any associated Shoppingcarts
+        User.hasOne(models.Shoppingcart, {
+            allowNull: true
+        });
+        /* User.hasMany(models.Book, {
+            allowNull: true
+        }); */
+        User.hasMany(models.Purchase, {
+        });
+    };
+
+    User.prototype.validPassword = function (password) {
+        return bcrypt.compareSync(password, this.password);
+    };
+
+    User.addHook("beforeCreate", function (user) {
+        user.password = bcrypt.hashSync(user.password, bcrypt.genSaltSync(10), null);
+    });
+
+    return User;
+};
