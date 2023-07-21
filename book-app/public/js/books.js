@@ -113,7 +113,7 @@ $(document).ready(() => {
       method: "GET",
       url: "/api/books/"
   }).then((books) => {
-      // console.log('Books: ', books);
+      console.log('Books: ', books);
 
       // Create the list of categories
       let categories = books.map((book) => {

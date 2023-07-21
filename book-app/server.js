@@ -18,10 +18,8 @@ const PORT = process.env.PORT || 3001;
 // ******************************************************************************
 // *** Dependencies
 // =============================================================
-var express = require("express");
-var path = require("path")
 
-var session = require("express-session");
+
 // Requiring passport as we've configured it
 var passport = require("./config/passport");
 
@@ -31,8 +29,6 @@ var compression = require('compression')
 
 // Sets up the Express App
 // =============================================================
-var app = express();
-var PORT = process.env.PORT || 8090;
 
 // compress all responses
 app.use(compression())
@@ -45,7 +41,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // Set Handlebars.
-var exphbs = require("express-handlebars");
 
 app.engine("handlebars", exphbs({
   defaultLayout: "main",

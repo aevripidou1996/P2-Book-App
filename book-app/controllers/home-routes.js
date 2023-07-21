@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { Book, Genre } = require("../models/");
-const withAuth = require("../utils/auth");
+// const withAuth = require("../utils/auth");
 
 // get all books for homepage
 router.get("/", async (req, res) => {
