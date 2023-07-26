@@ -10,6 +10,7 @@ var path = require("path")
 var session = require("express-session");
 // Requiring passport as we've configured it
 var passport = require("./config/passport");
+const cors = require("cors");
 
 // Compress
 var compression = require('compression')
@@ -26,6 +27,7 @@ app.use(compression())
 // Requiring our models for syncing
 var db = require("./models");
 
+app.use(cors());
 // Sets up the Express app to handle data parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
